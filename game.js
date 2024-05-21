@@ -1,1 +1,3 @@
-alert("test");
+function nextSequence() {
+  console.log(Math.floor(Math.random() * 4));
+}
