@@ -1,3 +1,5 @@
+const gamePattern = [""];
+
 const buttonColors = ["red", "blue", "green", "yellow"];
 
 function nextSequence() {
