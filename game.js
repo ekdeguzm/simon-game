@@ -6,8 +6,8 @@ const userClickedPattern = [];
 $(".btn").click(function () {
   var userChosenColor = $(this).attr("id");
   userClickedPattern.push(userChosenColor);
-  var audio = new Audio("sounds/" + userChosenColor + ".mp3");
-  audio.play();
+  playSound(userChosenColor);
+  animatePress(userChosenColor);
 });
 
 function nextSequence() {
@@ -23,11 +23,17 @@ function nextSequence() {
     .fadeOut(100)
     .fadeIn(100);
   //3. use JS to play sound
-  var audio = new Audio("sounds/" + randomChosenColor + ".mp3");
-  audio.play();
+  playSound(randomChosenColor);
 }
 
 function playSound(name) {
   var audio = new Audio("sounds/" + name + ".mp3");
   audio.play();
+}
+
+function animatePress(currentColor) {
+  $("#" + currentColor).addClass("pressed");
+  setTimeout(function () {
+    $("#" + currentColor).removeClass("pressed");
+  }, 1000);
 }
