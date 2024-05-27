@@ -1,28 +1,62 @@
-const buttonColors = ["red", "blue", "green", "yellow"];
+var buttonColors = ["red", "blue", "green", "yellow"];
 
-const gamePattern = [];
-const userClickedPattern = [];
+var gamePattern = [];
+var userClickedPattern = [];
 
-$(".btn").click(function () {
-  var userChosenColor = $(this).attr("id");
-  userClickedPattern.push(userChosenColor);
-  playSound(userChosenColor);
-  animatePress(userChosenColor);
+var started = false;
+var level = 0;
+
+$(document).keypress(function () {
+  if (!started) {
+    $("#level-title").text("Level " + level);
+    nextSequence();
+    started = true;
+  }
 });
 
+$(".btn").click(function () {
+  var userChosenColor = this.id;
+  userClickedPattern.push(userChosenColor);
+
+  playSound(userChosenColor);
+  animatePress(userChosenColor);
+
+  checkAnswer(userClickedPattern.length - 1);
+});
+
+function checkAnswer(currentLevel) {
+  if (gamePattern[currentLevel] === userClickedPattern[currentLevel]) {
+    if (userClickedPattern.length === gamePattern.length) {
+      setTimeout(function () {
+        nextSequence();
+      }, 1000);
+    }
+  } else {
+    console.log("wrong");
+    var wrongAudio = new Audio("sounds/wrong.mp3");
+    wrongAudio.play();
+    $("body").addClass("game-over");
+    setTimeout(function () {
+      $("body").removeClass("game-over");
+    }, 200);
+    $("#level-title").text("Game Over, Press Any Key to Restart");
+    startOver();
+  }
+}
+
 function nextSequence() {
+  userClickedPattern = [];
+  level++;
+  $("#level-title").text("Level " + level);
+
   var randomNumber = Math.floor(Math.random() * 4);
   var randomChosenColor = buttonColors[randomNumber];
   gamePattern.push(randomChosenColor);
 
-  //1. Use jQuery to select the button with the same id as randomChosenColor
-
-  //2. jQuery to animate a flash to the button selected
   $("#" + randomChosenColor)
     .fadeIn(100)
     .fadeOut(100)
     .fadeIn(100);
-  //3. use JS to play sound
   playSound(randomChosenColor);
 }
 
@@ -35,5 +69,11 @@ function animatePress(currentColor) {
   $("#" + currentColor).addClass("pressed");
   setTimeout(function () {
     $("#" + currentColor).removeClass("pressed");
-  }, 1000);
+  }, 100);
+}
+
+function startOver() {
+  level = 0;
+  gamePattern = [];
+  started = false;
 }
