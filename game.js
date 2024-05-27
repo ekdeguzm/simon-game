@@ -6,6 +6,7 @@ var userClickedPattern = [];
 var started = false;
 var level = 0;
 
+// start game  with keypress
 $(document).keypress(function () {
   if (!started) {
     $("#level-title").text("Level " + level);
@@ -14,36 +15,7 @@ $(document).keypress(function () {
   }
 });
 
-$(".btn").click(function () {
-  var userChosenColor = this.id;
-  userClickedPattern.push(userChosenColor);
-
-  playSound(userChosenColor);
-  animatePress(userChosenColor);
-
-  checkAnswer(userClickedPattern.length - 1);
-});
-
-function checkAnswer(currentLevel) {
-  if (gamePattern[currentLevel] === userClickedPattern[currentLevel]) {
-    if (userClickedPattern.length === gamePattern.length) {
-      setTimeout(function () {
-        nextSequence();
-      }, 1000);
-    }
-  } else {
-    console.log("wrong");
-    var wrongAudio = new Audio("sounds/wrong.mp3");
-    wrongAudio.play();
-    $("body").addClass("game-over");
-    setTimeout(function () {
-      $("body").removeClass("game-over");
-    }, 200);
-    $("#level-title").text("Game Over, Press Any Key to Restart");
-    startOver();
-  }
-}
-
+// create pattern sequence
 function nextSequence() {
   userClickedPattern = [];
   level++;
@@ -58,6 +30,41 @@ function nextSequence() {
     .fadeOut(100)
     .fadeIn(100);
   playSound(randomChosenColor);
+}
+
+// log what is clicked by user
+$(".btn").click(function () {
+  var userChosenColor = this.id;
+  userClickedPattern.push(userChosenColor);
+
+  playSound(userChosenColor);
+  animatePress(userChosenColor);
+
+  // checks answer every time there's a click
+  checkAnswer(userClickedPattern.length - 1);
+});
+
+function checkAnswer(currentLevel) {
+  // var gamePattern = ["blue"]; is level 1 with index 0
+  // var gamePattern = ["red", "blue", "green"];
+  // var userClickedPattern = ["red", "blue", "green"];
+  // every click will check every index if color is the same
+  if (gamePattern[currentLevel] === userClickedPattern[currentLevel]) {
+    if (userClickedPattern.length === gamePattern.length) {
+      setTimeout(function () {
+        nextSequence();
+      }, 1000);
+    }
+  } else {
+    var wrongAudio = new Audio("sounds/wrong.mp3");
+    wrongAudio.play();
+    $("body").addClass("game-over");
+    setTimeout(function () {
+      $("body").removeClass("game-over");
+    }, 200);
+    $("#level-title").text("Game Over, Press Any Key to Restart");
+    startOver();
+  }
 }
 
 function playSound(name) {
